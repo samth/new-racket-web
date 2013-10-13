@@ -307,7 +307,16 @@
            programming language @-plai{applications} or @-redex{models},
            looking to @continue{expand your horizons}, or ready to dive into
            @learning{research}, Racket can help you become a better programmer
-           and system builder.}))))
+           and system builder.}))
+    @h2{Some random books}
+    @(define (book image site)
+       @a[href: @list{http://@|site|/}]{
+         @img[src: (copyfile (in-here (format "img/~a" image))) width: 180]})
+    @book["htdp-cover.gif"  "htdp.org"]
+    @book["ror-cover.png"   "realmofracket.com"]
+    @book["plai-cover.jpg"  "www.plai.org"]
+    @book["redex-cover.jpg" "redex.racket-lang.org"]
+    ))
 
 (define (slideshow-panel l1 l2)
   (define l (append l1 l2))
@@ -318,11 +327,13 @@
     (set! button-ids+labels (cons (cons id txt) button-ids+labels))
     (a href: "#" id: id onclick: (list onclick "; return false;") title: tip
        nbsp)) ; empty, filled by JS code, so JS-less browsers won't see it
+  (define next (img src: (copyfile (in-here "img/next.png")) width: 10))
+  (define prev (img src: (copyfile (in-here "img/prev.png")) width: 10))
   (div class: 'slideshow
     (div class: 'buttonpanel
-      @button["<" "Previous example"  'rewindbutton  "rewind_show()"]
-      @button[">" "Next example"      'advancebutton "advance_show()"]
-      @button["?" "Explain this code" 'helpbutton "set_help(!help_showing)"]
+      @button[prev "Previous example"  'rewindbutton  "rewind_show()"]
+      @button[next "Next example"      'advancebutton "advance_show()"]
+      @button["?"  "Explain this code" 'helpbutton "set_help(!help_showing)"]
       (div class: 'hiddenhelp id: "helppanel" style: "display: none;"
         (div class: 'helpcontent
           @button["close" "Close help" 'closebutton "set_help(false)"]
@@ -385,7 +396,7 @@
       @(add-newlines
         (for/list ([id+label (in-list button-ids+labels)])
           (let ([id (car id+label)] [label (cdr id+label)])
-            @list{document.getElementById("@id").textContent = "@label"@";"})))
+            @list{document.getElementById("@id").innerHTML = '@label'@";"})))
     }))
 
 ;; TODO
