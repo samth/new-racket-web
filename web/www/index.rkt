@@ -416,7 +416,7 @@
 
 ;; resources that are specific to the front page
 
-(define loud (copyfile (in-here "loud.png")))
+(define loud (copyfile (in-here "img/loud.png")))
 
 (define more.css
   @plain[#:referrer (λ (url) (link rel: "stylesheet" type: "text/css"
