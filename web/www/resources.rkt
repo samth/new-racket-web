@@ -1,3 +1,3 @@
-#lang meta/web
+#lang s-exp "../common/main.rkt"
 
 (define+provide-context "www")

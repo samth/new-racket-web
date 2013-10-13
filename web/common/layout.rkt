@@ -3,6 +3,12 @@
 (require scribble/html (for-syntax racket/base syntax/name syntax/parse)
          "utils.rkt" "resources.rkt")
 
+(define copyfile values)
+(define get-file values)
+(define (css url) @link[href: url rel: "stylesheet" type: "text/css"]{})
+(define (row . content) (apply div class: "row" content))
+(define (icon name) @i[class: name]{})
+
 (define-for-syntax (process-contents who layouter stx xs)
   (let loop ([xs xs] [kws '()] [id? #f])
     (syntax-case xs ()
@@ -51,7 +57,13 @@
 ;; page layout function
 (define-syntax (page stx)
   (syntax-case stx () [(_ . xs) (process-contents 'page #'page* stx #'xs)]))
-(define preamble
+
+
+(define (preamble get)
+  ;; these fonts are referenced by the CSS, so we need to copy them
+  (copyfile (in-here "fonts/icons/entypo.woff") "fonts/icons/entypo.woff")
+  (copyfile (in-here "fonts/icons/entypo.ttf") "fonts/icons/entypo.ttf")
+  (copyfile (in-here "fonts/icons/entypo.eot") "fonts/icons/entypo.eot")
   @list{
     @doctype['html]
     @; paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
@@ -61,21 +73,28 @@
     @comment{[if IE 9]>    <html class="no-js ie9" lang="en"> <![endif]}
     @comment{[if gt IE 9]><!--> <html class="no-js" lang="en" @;
              itemscope itemtype="http://schema.org/Product"> <!--<![endif]}
+    @script[src: (copyfile (in-here "js/libs/modernizr-2.6.2.min.js"))]
+    @css[(get-file 'gumby-css)]
+    @css[(get-file 'local-style)]
+    @css[(get-file 'scribble-css)]
     })
-(define postamble
-  @list{
-    @; Grab Google CDN's jQuery, with a protocol relative URL;
-    @;   fall back to local if offline
-    @; ... TODO: distribute the JS stuffs ...
-    @; @script[src: '("http://ajax.googleapis.com/"
-    @;                "ajax/libs/jquery/1.9.1/jquery.min.js")]
-    @; @script/inline{
-    @;   window.jQuery || document.write(@;
-    @;     '<script src="/js/libs/jquery-1.9.1.min.js"><\/script>')}
-    @; @script[src: "js/libs/gumby.min.js"]
-    @; @script[src: "js/plugins.js"]
-    @; @script[src: "js/main.js"]
-    })
+
+
+(define (postamble get)
+  (let ([local-jquery (copyfile (in-here "js/libs/jquery-1.9.1.min.js"))])
+    @list{
+          @; Grab Google CDN's jQuery, with a protocol relative URL;
+          @;   fall back to local if offline
+          @; ... TODO: distribute the JS stuffs ...
+          @script[src: '("http://ajax.googleapis.com/"
+                         "ajax/libs/jquery/1.9.1/jquery.min.js")]
+           @script/inline{
+                          window.jQuery || document.write(@;
+                          '<script src="@|local-jquery|"><\/script>')}
+           @script[src: (copyfile (in-here "js/libs/gumby.min.js"))]
+           @script[src: (copyfile (in-here "js/plugins.js"))]
+           @script[src: (copyfile (in-here "js/main.js"))]
+    }))
 
 (define (page* #:id [id #f] #:dir [dir #f] #:file [file #f]
                ;; if this is true, return only the html -- don't create
@@ -92,7 +111,7 @@
                #:window-title [wintitle @list{Racket: @label}]
                ;; can be #f (default), 'full: full page (and no div),
                ;; otherwise, a css width
-               #:width [width #f]
+               #:width [width 'full]
                #:description [description #f] ; for a meta tag
                #:extra-headers [extra-headers #f]
                #:extra-body-attrs [body-attrs #f]
@@ -150,54 +169,19 @@
 
 (define navbar-info (box #f))
 (define (navbar-maker logo)
-  (define pages-promise
-    (lazy (car (or (unbox navbar-info)
-                   (error 'navbar "no navbar info set")))))
-  (define top-promise  (lazy (cadr  (unbox navbar-info))))
-  (define help-promise (lazy (caddr (unbox navbar-info))))
-  (define pages-parts-of-promise
-    (lazy (map pages->part-of (force pages-promise))))
-  (define (middle-text size x)
-    (span style: `("font-size: ",size"px; vertical-align: middle;")
-          class: 'navtitle
-          x))
-  (define OPEN
-    (list (middle-text 100 "(")
-          (middle-text 80 "(")
-          (middle-text 60 "(")
-          (middle-text 40 nbsp)))
-  (define CLOSE
-    (list (middle-text 80 "Racket")
-          (middle-text 40 nbsp)
-          (middle-text 60 ")")
-          (middle-text 80 ")")
-          (middle-text 100 ")")))
-  (define (header-cell logo)
-    (td (a href: (url-of (force top-promise))
-           OPEN
-           (img src: logo alt: "[logo]"
-                style: '("vertical-align: middle; "
-                         "margin: 13px 0.25em 0 0; border: 0;"))
-           CLOSE)))
-  (define (links-table this)
-    (table width: "100%"
-      (tr (map (λ (nav navpart)
-                 (td class: 'navlinkcell
-                   (span class: 'navitem
-                     (span class: (if (eq? (pages->part-of this) navpart)
-                                    'navcurlink 'navlink)
-                       nav))))
-               (force pages-promise)
-               (force pages-parts-of-promise)))))
   (λ (this)
-    (div class: 'racketnav
-      (div class: 'navcontent
-        (table border: 0 cellspacing: 0 cellpadding: 0 width: "100%"
-          (tr (header-cell logo)
-              (td class: 'helpiconcell
-                  (let ([help (force help-promise)])
-                    (span class: 'helpicon (if (eq? this help) nbsp help)))))
-          (tr (td colspan: 2 (links-table this))))))))
+     @div[class: "navbar" gumby-fixed: "top" id: "nav1"]{
+  @row{
+   @a[class: "toggle" gumby-trigger: "#nav1 > .row > ul" href: "#"]{
+     @icon{icon-menu}}
+   @a[class: "five columns logo" href: ""]{
+     @img[class: "logo" src: logo]}
+   @ul[class: "five columns"]{
+     @li{@a[href: "https://pkg.racket-lang.org"]{Packages}}
+     @li{@a[href: "https://docs.racket-lang.org"]{Documentation}}
+     @li{@a[href: "https://blog.racket-lang.org"]{Blog}}
+     @li{@button[class: "medium metro info btn icon-left entypo icon-install"]{
+       @a[href: "#"]{Download}}}}}}))
 
 (define (html-favicon-maker icon)
   (define headers

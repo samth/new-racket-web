@@ -25,6 +25,11 @@
   `([logo  ,(copyfile  "logo.png")]
     [icon  ,(copyfile  "plticon.ico")]
     [style ,(writefile "plt.css" racket-style)]
+    
+    (gumby-css (copyfile "css/gumby.css" "css/gumby.css"))
+    (local-style (copyfile "css/style.css" "css/style.css"))
+    (scribble-css (copyfile "css/scribble.css" "css/scribble.css"))
+
     ;; the following resources are not used directly, so their names are
     ;; irrelevant
     [verification:google

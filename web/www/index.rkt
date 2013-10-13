@@ -1,4 +1,4 @@
-#lang meta/web
+#lang at-exp s-exp "../common/main.rkt"
 
 (require "resources.rkt" "code.rkt" "download.rkt" "learning.rkt")
 
@@ -288,26 +288,11 @@
 (define prev @img[src: (copyfile (in-here "img/prev.png"))  style: "width: 50px"])
 (define next @img[src: (copyfile (in-here "img/next.png"))  style: "width: 50px"])
 
-(define gumby-css (copyfile (in-here "css/gumby.css")
-                            "css/gumby.css"))
-(define style (copyfile (in-here "css/style.css")
-                        "css/style.css"))
-(define scribble-css (copyfile (in-here "css/scribble.css") 
-                               "css/scribble.css"))
-(define gumby-js (copyfile (in-here "js/libs/gumby.min.js")))
-(define plugins-js (copyfile (in-here"js/plugins.js")))
-(define main-js (copyfile (in-here "js/main.js")))
-(define jquery-js (copyfile (in-here "js/libs/jquery-1.9.1.min.js")))
-
-(copyfile (in-here "fonts/icons/entypo.woff") "fonts/icons/entypo.woff")
-(copyfile (in-here "fonts/icons/entypo.ttf") "fonts/icons/entypo.ttf")
-(copyfile (in-here "fonts/icons/entypo.eot") "fonts/icons/entypo.eot")
-
-
 (provide index)
 
 (define index
   @page[#:window-title "The Racket Language"
+        #:width 'full
         #:description
         @'{Racket is a modern programming language in the Lisp/Scheme family, @;
            suitable for a wide range of applications.  @;
@@ -315,31 +300,7 @@
            integrated development environment, and many batteries-included @;
            libraries.}
         @; Ask google to not use the ODP description
-        #:extra-headers @list{@meta[name: "robots" content: "NOODP"]
-                              @;<!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
-                              @script[src: (copyfile (in-here "js/libs/modernizr-2.6.2.min.js"))]
-
-                              @script[src: "http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"]
-  @js{window.jQuery || document.write('<script src="@|jquery-js|"><\/script>')}
-
-                              @script[src: gumby-js]
-                              @script[src: plugins-js]
-                              @script[src: main-js]
-                              @css[gumby-css]
-                              @css[style]
-                              @css[scribble-css]}]{
-@div[class: "navbar" gumby-fixed: "top" id: "nav1"]{
-  @row{
-   @a[class: "toggle" gumby-trigger: "#nav1 > .row > ul" href: "#"]{
-     @icon{icon-menu}}
-   @a[class: "five columns logo" href: ""]{
-     @img[class: "logo" src: (copyfile (in-here "img/logo-new.png"))]}
-   @ul[class: "five columns"]{
-     @li{@a[href: "https://pkg.racket-lang.org"]{Packages}}
-     @li{@a[href: "https://docs.racket-lang.org"]{Documentation}}
-     @li{@a[href: "https://blog.racket-lang.org"]{Blog}}
-     @li{@button[class: "medium metro info btn icon-left entypo icon-install"]{
-       @a[href: "#"]{Download}}}}}}
+        #:extra-headers @list{@meta[name: "robots" content: "NOODP"]}]{
 
  @columns[10 #:row? #t #:center? #t]{
   @h2[style: "font-size: 180%; margin-bottom: 10pt"]{
