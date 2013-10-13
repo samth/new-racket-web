@@ -308,10 +308,6 @@
            looking to @continue{expand your horizons}, or ready to dive into
            @learning{research}, Racket can help you become a better programmer
            and system builder.}))))
-(define index2
-  @page{
-    new stuff here
-  })
 
 (define (slideshow-panel l1 l2)
   (define l (append l1 l2))
@@ -541,15 +537,3 @@
     .codemodpath:hover {
       text-decoration: none;
     }})
-
-#|
-
-  >>> For additional resources of all kinds:
-
-(define js/foo.js
-  @plain{
-    This is an example of generating some random file
-  })
-
-(void (copyfile (in-here "index.rkt")))
-|#
