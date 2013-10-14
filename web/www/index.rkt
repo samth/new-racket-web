@@ -428,6 +428,8 @@
 (define more.css
   @plain[#:referrer (λ (url) (link rel: "stylesheet" type: "text/css"
                                    href: url title: "default"))]{
+    @; TODO: from here to END it's css that should probably be removed;
+    @;   after that it's all scribble stuff.
     .bodycontent {
       background-image: url('@loud');
       background-repeat: no-repeat;
@@ -511,6 +513,7 @@
       position: relative;
       float: right;
     }
+    @; END
     @;
     .codecomment {
       color: #c2741f;
@@ -547,4 +550,11 @@
     }
     .codemodpath:hover {
       text-decoration: none;
-    }})
+    }
+    .codesnip {
+      display: none;
+    }
+    .codesnip.active {
+      display: block;
+    }
+  })
