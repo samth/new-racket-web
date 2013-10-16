@@ -33,6 +33,7 @@ Polling a URL can result in one of four options:
 |#
 
 (require net/url net/ftp racket/lazy-require)
+
 (lazy-require [net/sendmail (send-mail-message)])
 
 ;; the mirrors file has (list url secs result) entries containing the url as a
