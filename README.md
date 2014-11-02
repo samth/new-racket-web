@@ -1,4 +1,4 @@
-New Racket Web Page
+Prototype of New Racket Web Page
 ===================
 
-This is a revision of the existing Racket web page, based on the Gumby framework.
+This was a prototype of the new Racket web pages, which are now at racket-lang.org
